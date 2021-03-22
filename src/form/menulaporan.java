@@ -8,6 +8,7 @@ package form;
 import static form.penduduk.tabmode;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,19 +16,25 @@ import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import koneksi.koneksi;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
  * @author Aji Rizki Santoso
  */
-public class mainmenu extends javax.swing.JFrame {
+public class menulaporan extends javax.swing.JFrame {
     public static DefaultTableModel tabmode;
     private Connection conn = new koneksi().connect();
 
     /**
      * Creates new form penerima
      */
-    public mainmenu() {
+    public menulaporan() {
         initComponents();
         setLocationRelativeTo(getRootPane());
         Toolkit toolkit = getToolkit(); // Membuat form login muncul ditengah
@@ -58,16 +65,16 @@ public class mainmenu extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Sylfaen", 1, 24)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Main Menu");
+        jLabel3.setText("Menu Laporan");
 
-        jButton3.setText("Keluar");
+        jButton3.setText("Kembali");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
 
-        jButton1.setText("RT");
+        jButton1.setText("Data RT");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -76,35 +83,35 @@ public class mainmenu extends javax.swing.JFrame {
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Untitled-1.png"))); // NOI18N
 
-        jButton2.setText("Penduduk");
+        jButton2.setText("Data Penduduk");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Barang");
+        jButton4.setText("Data Barang");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
 
-        jButton5.setText("Distribusi");
+        jButton5.setText("Data Bukan Penerima");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
             }
         });
 
-        jButton6.setText("Laporan");
+        jButton6.setText("Data Distribusi");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
             }
         });
 
-        jButton7.setText("Penerima");
+        jButton7.setText("Data Penerima");
         jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton7ActionPerformed(evt);
@@ -123,11 +130,11 @@ public class mainmenu extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(52, 52, 52)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(49, 49, 49)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -169,53 +176,93 @@ public class mainmenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        int ok = JOptionPane.showConfirmDialog(null,"apakah anda yakin ingin keluar?","konfimasi logout",JOptionPane.YES_NO_OPTION);
-        if (ok==0){
-        new login().setVisible(true);
+        mainmenu mn = new mainmenu();
+        mn.show();
         this.dispose();
-        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        penduduk pd = new penduduk();
-        pd.show();
-        this.dispose();
+        try {
+//            HashMap hash = new HashMap();
+
+            InputStream is = getClass().getResourceAsStream("/report/reportKK.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, conn);
+            JasperViewer.viewReport(jasperPrint, false);
+        }catch (JRException e) {
+            JOptionPane.showMessageDialog(null, "Error " + e);
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        rt rt = new rt();
-        rt.show();
-        this.dispose();
+        try {
+//            HashMap hash = new HashMap();
+
+            InputStream is = getClass().getResourceAsStream("/report/reportRT.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, conn);
+            JasperViewer.viewReport(jasperPrint, false);
+        }catch (JRException e) {
+            JOptionPane.showMessageDialog(null, "Error " + e);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-        barangbantuan bb = new barangbantuan();
-        bb.show();
-        this.dispose();
+        try {
+//            HashMap hash = new HashMap();
+
+            InputStream is = getClass().getResourceAsStream("/report/reportBarang.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, conn);
+            JasperViewer.viewReport(jasperPrint, false);
+        }catch (JRException e) {
+            JOptionPane.showMessageDialog(null, "Error " + e);
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
-        penerima pn = new penerima();
-        pn.show();
-        this.dispose();
+        try {
+//            HashMap hash = new HashMap();
+
+            InputStream is = getClass().getResourceAsStream("/report/reportPenerima.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, conn);
+            JasperViewer.viewReport(jasperPrint, false);
+        }catch (JRException e) {
+            JOptionPane.showMessageDialog(null, "Error " + e);
+        }
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        distribusi ds = new distribusi();
-        ds.show();
-        this.dispose();
+        try {
+//            HashMap hash = new HashMap();
+
+            InputStream is = getClass().getResourceAsStream("/report/reportBukanPenerima.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, conn);
+            JasperViewer.viewReport(jasperPrint, false);
+        }catch (JRException e) {
+            JOptionPane.showMessageDialog(null, "Error " + e);
+        }
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        menulaporan ml = new menulaporan();
-        ml.show();
-        this.dispose();
+        try {
+//            HashMap hash = new HashMap();
+
+            InputStream is = getClass().getResourceAsStream("/report/reportDistribusi.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(is);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, conn);
+            JasperViewer.viewReport(jasperPrint, false);
+        }catch (JRException e) {
+            JOptionPane.showMessageDialog(null, "Error " + e);
+        }
     }//GEN-LAST:event_jButton6ActionPerformed
 
     /**
@@ -235,14 +282,18 @@ public class mainmenu extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(mainmenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(menulaporan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(mainmenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(menulaporan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(mainmenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(menulaporan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(mainmenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(menulaporan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -251,7 +302,7 @@ public class mainmenu extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new mainmenu().setVisible(true);
+                new menulaporan().setVisible(true);
             }
         });
     }
